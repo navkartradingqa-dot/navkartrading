@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /pos
+Disallow: /api
+Disallow: /pay
+
+Sitemap: https://navkartrading.qa/sitemap.xml

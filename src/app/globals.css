@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+@theme {
+  /* Navkar brand — deep maroon (Navkar/Jain heritage) with a warm gold accent */
+  --color-brand-50: #fdf3f4;
+  --color-brand-100: #fbe5e8;
+  --color-brand-200: #f6ccd3;
+  --color-brand-300: #eea4b1;
+  --color-brand-400: #e2718a;
+  --color-brand-500: #d04566;
+  --color-brand-600: #b32a51;
+  --color-brand-700: #8f1f43;
+  --color-brand-800: #781d3d;
+  --color-brand-900: #661c38;
+  --color-brand-950: #390a1c;
+
+  --color-gold-400: #f0c14b;
+  --color-gold-500: #e3aa1f;
+  --color-gold-600: #c08a12;
+
+  --color-ink-50: #f7f7f8;
+  --color-ink-100: #eeeef1;
+  --color-ink-200: #dadce0;
+  --color-ink-300: #b9bbc4;
+  --color-ink-400: #9295a3;
+  --color-ink-500: #747787;
+  --color-ink-600: #5d606f;
+  --color-ink-700: #4c4e5a;
+  --color-ink-800: #41434d;
+  --color-ink-900: #393a43;
+  --color-ink-950: #25262c;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic",
+    "Helvetica Neue", Arial, sans-serif;
+
+  --radius-card: 0.875rem;
+}
+
+:root {
+  --header-h: 4rem;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: #fafafa;
+  color: var(--color-ink-950);
+  font-family: var(--font-sans);
+}
+
+/* RTL niceties: flip only what needs flipping */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Hide number input spinners in POS quantity fields */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ------------------------------------------------------------ components */
+
+@utility card {
+  background: white;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-ink-100);
+}
+
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.625rem;
+  background: var(--color-brand-700);
+  color: white;
+  font-weight: 600;
+  padding: 0.625rem 1.125rem;
+  transition: background-color 0.15s ease;
+}
+
+@utility btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.625rem;
+  border: 1px solid var(--color-ink-200);
+  background: white;
+  font-weight: 600;
+  padding: 0.625rem 1.125rem;
+}
+
+@utility field {
+  width: 100%;
+  border-radius: 0.625rem;
+  border: 1px solid var(--color-ink-200);
+  background: white;
+  padding: 0.5625rem 0.75rem;
+  font-size: 0.9375rem;
+  outline: none;
+}
+
+/* ---------------------------------------------------------- print/receipt */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+  .receipt {
+    width: 80mm;
+    margin: 0;
+    padding: 0;
+    font-family: ui-monospace, "Courier New", monospace;
+    font-size: 12px;
+    color: #000;
+  }
+  @page {
+    margin: 4mm;
+  }
+}
+
+.receipt {
+  font-family: ui-monospace, "Courier New", monospace;
+}
