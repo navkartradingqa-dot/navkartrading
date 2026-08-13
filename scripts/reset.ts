@@ -1,5 +1,5 @@
 /** Drops the public schema so `db:push` can rebuild it from scratch. */
-import "dotenv/config";
+import "./load-env";
 import { Pool } from "pg";
 
 async function main() {

@@ -4,7 +4,7 @@
  *
  *   npm run db:push && npm run db:seed
  */
-import "dotenv/config";
+import "./load-env";
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import bcrypt from "bcryptjs";
