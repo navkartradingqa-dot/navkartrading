@@ -19,8 +19,7 @@ export const en = {
   "nav.allCategories": "All Categories",
 
   "home.hero.title": "Genuine electronics, delivered across Qatar",
-  "home.hero.sub":
-    "Laptops, mobiles and accessories with local warranty. Free delivery in Doha over QAR 300.",
+  "home.hero.sub": "Laptops, mobiles and accessories with local warranty.",
   "home.hero.cta": "Shop now",
   "home.hero.cta2": "Track my order",
   "home.featured": "Featured products",
@@ -176,7 +175,7 @@ export const ar: Dict = {
   "nav.allCategories": "كل الأقسام",
 
   "home.hero.title": "إلكترونيات أصلية، توصيل لكل قطر",
-  "home.hero.sub": "لابتوبات وهواتف وملحقات بضمان محلي. توصيل مجاني داخل الدوحة للطلبات فوق ٣٠٠ ر.ق.",
+  "home.hero.sub": "لابتوبات وهواتف وملحقات بضمان محلي.",
   "home.hero.cta": "تسوّق الآن",
   "home.hero.cta2": "تتبّع طلبي",
   "home.featured": "منتجات مميزة",
