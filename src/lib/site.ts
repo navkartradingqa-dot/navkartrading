@@ -7,7 +7,7 @@ export const site = {
     "Laptops, mobile phones and accessories with local warranty. Delivery across Qatar, cash on delivery available.",
   descriptionAr:
     "لابتوبات وهواتف وملحقات بضمان محلي. توصيل لكل قطر مع خيار الدفع عند الاستلام.",
-  phone: process.env.NEXT_PUBLIC_SHOP_PHONE ?? "+974 5511 6627",
+  phone: process.env.NEXT_PUBLIC_SHOP_PHONE ?? "+974000000",
   whatsapp: process.env.NEXT_PUBLIC_SHOP_WHATSAPP ?? "97455116627",
   email: process.env.NEXT_PUBLIC_SHOP_EMAIL ?? "sales@navkartrading.qa",
   address: "Doha, Qatar",
