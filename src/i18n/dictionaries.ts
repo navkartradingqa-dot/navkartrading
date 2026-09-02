@@ -29,7 +29,7 @@ export const en = {
   "home.viewAll": "View all",
 
   "usp.delivery.title": "Fast Doha delivery, Same Day for other zones",
-  "usp.delivery.sub": "Same-day inside Doha",
+  "usp.delivery.sub": "Same-day inside Doha, Same day for other zones",
   "usp.cod.title": "Cash on delivery",
   "usp.cod.sub": "Pay the driver in cash or by card",
   "usp.warranty.title": "Local warranty",
