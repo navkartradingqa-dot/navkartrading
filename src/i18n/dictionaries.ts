@@ -28,7 +28,7 @@ export const en = {
   "home.browse": "Browse by category",
   "home.viewAll": "View all",
 
-  "usp.delivery.title": "Fast Doha delivery",
+  "usp.delivery.title": "Fast Doha delivery, Same Day for other zones",
   "usp.delivery.sub": "Same-day inside Doha",
   "usp.cod.title": "Cash on delivery",
   "usp.cod.sub": "Pay the driver in cash or by card",
@@ -106,14 +106,17 @@ export const en = {
   "checkout.required": "Please fill in the required fields.",
 
   "confirm.title": "Thank you! Your order is confirmed",
-  "confirm.sub": "We've received your order and will contact you shortly on WhatsApp.",
+  "confirm.sub":
+    "We've received your order and will contact you shortly on WhatsApp.",
   "confirm.number": "Order number",
   "confirm.tracking": "Tracking code",
   "confirm.trackCta": "Track this order",
-  "confirm.saveNote": "Save your tracking code — you'll need it to check your order status.",
+  "confirm.saveNote":
+    "Save your tracking code — you'll need it to check your order status.",
 
   "track.title": "Track your order",
-  "track.sub": "Enter the tracking code from your confirmation, or your mobile number.",
+  "track.sub":
+    "Enter the tracking code from your confirmation, or your mobile number.",
   "track.placeholder": "NT-XXXX-XXXX or 3XXXXXXX",
   "track.cta": "Track",
   "track.notFound": "We couldn't find an order with that code.",
