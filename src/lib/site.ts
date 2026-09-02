@@ -8,7 +8,7 @@ export const site = {
   descriptionAr:
     "لابتوبات وهواتف وملحقات بضمان محلي. توصيل لكل قطر مع خيار الدفع عند الاستلام.",
   phone: process.env.NEXT_PUBLIC_SHOP_PHONE ?? "+974000000",
-  whatsapp: process.env.NEXT_PUBLIC_SHOP_WHATSAPP ?? "97455116627",
+  whatsapp: process.env.NEXT_PUBLIC_SHOP_WHATSAPP ?? "974000000",
   email: process.env.NEXT_PUBLIC_SHOP_EMAIL ?? "sales@navkartrading.qa",
   address: "Doha, Qatar",
   addressAr: "الدوحة، قطر",
