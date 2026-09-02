@@ -52,6 +52,7 @@ export function Header({ categories }: { categories: Cat[] }) {
     <header className="sticky top-0 z-40 border-b border-ink-100 bg-white">
       {/* announcement strip */}
       <div className="bg-brand-800 text-white">
+        <div><h1>asdasasds</h1></div>
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5 text-xs">
           <span className="flex items-center gap-1.5">
             <Truck size={14} />
