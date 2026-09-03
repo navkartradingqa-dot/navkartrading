@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Download } from "lucide-react";
+import { Plus, Download, Upload } from "lucide-react";
 import { listProducts, getCategories } from "@/lib/catalog";
 import { formatMoney } from "@/lib/money";
 import { StockPill, EmptyState } from "@/components/admin-bits";
@@ -39,6 +39,10 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             <Download size={16} />
             Export CSV
           </a>
+          <Link href="/admin/import" className="btn-ghost text-sm">
+            <Upload size={16} />
+            Import
+          </Link>
           <Link href="/admin/products/new" className="btn-primary text-sm">
             <Plus size={16} />
             New product

@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { products, stockMovements } from "@/db/schema";
 import { getCategories, getBrands } from "@/lib/catalog";
 import { ProductForm } from "@/components/product-form";
+import { storageConfigured } from "@/lib/blob";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
         product={product}
         categories={categories.map((c) => ({ id: c.id, label: c.nameEn }))}
         brands={brands.map((b) => ({ id: b.id, label: b.name }))}
+        storageReady={storageConfigured()}
       />
 
       <section className="card overflow-hidden">

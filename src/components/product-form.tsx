@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { Save, Loader2, ExternalLink } from "lucide-react";
 import { saveProduct, type ActionState } from "@/app/admin/actions";
+import { ImageUploader } from "@/components/image-uploader";
 import type { Product } from "@/db/schema";
 
 type Option = { id: string; label: string };
@@ -12,10 +13,12 @@ export function ProductForm({
   product,
   categories,
   brands,
+  storageReady = false,
 }: {
   product?: Product | null;
   categories: Option[];
   brands: Option[];
+  storageReady?: boolean;
 }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(saveProduct, {});
 
@@ -100,14 +103,12 @@ export function ProductForm({
                   placeholder={"Display: 6.1\" OLED\nStorage: 256GB"}
                 />
               </Field>
-              <Field label="Image URLs — one per line">
-                <textarea
-                  name="images"
-                  defaultValue={(product?.images ?? []).join("\n")}
-                  className="field min-h-20 font-mono text-xs"
-                  placeholder="https://…/photo.jpg"
-                />
-              </Field>
+              <ImageUploader
+                name="images"
+                sku={product?.sku ?? ""}
+                initial={product?.images ?? []}
+                storageReady={storageReady}
+              />
             </div>
           </section>
         </div>

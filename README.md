@@ -6,7 +6,7 @@ shop in Doha, Qatar — one codebase, one database, one stock figure.
 - **Storefront** — bilingual EN/AR, 250 seeded products, cash on delivery and
   online card payment, public order tracking
 - **Admin** — dashboard, products, inventory with a full movement audit trail,
-  orders, staff, settings
+  orders, staff, settings, and a spreadsheet importer for bulk catalogue work
 - **POS** — browser till with barcode scanning, cash/card/split, thermal receipt,
   shift cash-up — plus a REST API for a physical POS machine
 
@@ -55,6 +55,7 @@ All three seeded accounts use the password in `SEED_ADMIN_PASSWORD`
 | `PAYMENT_PROVIDER` | | `mock` (default) or `skipcash` |
 | `SKIPCASH_*` | for live cards | Keys from your Skipcash merchant dashboard |
 | `POS_API_KEY` | | Optional bootstrap key for the first POS terminal |
+| `BLOB_READ_WRITE_TOKEN` | for photos | Set automatically when a Vercel Blob store is connected |
 
 Without `AUTH_SECRET` the admin and POS sign-in pages will error — it is the one
 variable people forget on the first Vercel deploy.
@@ -127,10 +128,15 @@ src/
       payments/          gateway webhooks
       pos/v1/            REST API for an external POS machine
       admin/export/      CSV exports
+      admin/import/      spreadsheet import (preview + apply)
+      admin/photos/      bulk photo upload, matched to products by SKU
   components/            UI, shared between storefront, admin and POS
   db/                    Drizzle schema and connection
   lib/
     catalog.ts           product queries
+    sheet.ts             .xlsx / .csv reader, no dependencies
+    product-import*.ts   spreadsheet → catalogue, with a preview step
+    blob.ts              product photo storage
     orders.ts            order creation, stock movement, status changes
     payments/            gateway adapters (mock, skipcash)
     auth.ts              JWT sessions, roles
@@ -153,6 +159,36 @@ PLAN.md                  the full project plan
 | `npm run db:seed` | Load the mock catalogue and sample orders |
 | `npm run db:reset` | Drop everything, recreate, reseed |
 | `npm run typecheck` | TypeScript check |
+| `npm run test:import` | Spreadsheet parser tests — no database needed |
+| `npm run template` | Rebuild `public/navkar-product-template.xlsx` (needs python + openpyxl) |
+
+## Bulk catalogue work
+
+**Admin → Import** takes an .xlsx or .csv and adds or updates many products at
+once. Upload the file, read the summary of what will change, then apply it —
+nothing is written to the database before that.
+
+- `SKU` is the key. A SKU that exists updates that product; a new one creates a
+  product. Columns left out of the sheet are left alone, so a sheet of just SKU
+  and Price only changes prices.
+- Column headings are matched loosely: "Selling Price", "price" and
+  "Retail Price" all mean the same field. Unrecognised columns are listed in the
+  preview and ignored.
+- `Price` plus `Discount %` sets the selling price and the struck-through
+  was-price together.
+- Stock changes made by an import are written to the movement log like any
+  other stock change.
+- Blank template: `public/navkar-product-template.xlsx`, linked from the import
+  page. Rebuild it with `npm run template` after adding categories.
+
+Photos go on the same page's **Photos** tab: name each file after its SKU
+(`NT-LAP-0012.jpg`, `NT-LAP-0012-2.jpg` for the second one) and drop the whole
+batch in. They are stored in Vercel Blob — create the store in Vercel → Storage
+and connect it to the project, which sets `BLOB_READ_WRITE_TOKEN` for you.
+
+The reader in `src/lib/sheet.ts` unzips and parses .xlsx itself rather than
+pulling in a spreadsheet library; `npm run test:import` covers it and the
+column parsing with no database or network.
 
 ## A note on money
 

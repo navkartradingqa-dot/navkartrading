@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   ArrowLeftRight,
+  Upload,
 } from "lucide-react";
 import { logoutAction } from "@/app/auth-actions";
 import type { SessionUser } from "@/lib/auth";
@@ -24,6 +25,7 @@ const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/orders", label: "Orders", icon: Receipt },
   { href: "/admin/products", label: "Products", icon: Package },
+  { href: "/admin/import", label: "Import", icon: Upload },
   { href: "/admin/inventory", label: "Inventory", icon: Boxes },
   { href: "/admin/movements", label: "Stock movements", icon: ArrowLeftRight },
   { href: "/admin/users", label: "Staff", icon: Users, adminOnly: true },

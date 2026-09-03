@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { getCategories, getBrands } from "@/lib/catalog";
 import { ProductForm } from "@/components/product-form";
+import { storageConfigured } from "@/lib/blob";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export default async function NewProductPage() {
       <ProductForm
         categories={categories.map((c) => ({ id: c.id, label: c.nameEn }))}
         brands={brands.map((b) => ({ id: b.id, label: b.name }))}
+        storageReady={storageConfigured()}
       />
     </div>
   );
