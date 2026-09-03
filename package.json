@@ -17,7 +17,7 @@
     "template": "python3 scripts/make-template.py"
   },
   "dependencies": {
-    "@vercel/blob": "latest",
+    "@vercel/blob": "^2.8.0",
     "bcryptjs": "^3.0.2",
     "drizzle-orm": "^0.45.2",
     "jose": "^6.1.0",
