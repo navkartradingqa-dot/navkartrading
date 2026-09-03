@@ -17,7 +17,10 @@ export function ProductForm({
   categories: Option[];
   brands: Option[];
 }) {
-  const [state, action, pending] = useActionState<ActionState, FormData>(saveProduct, {});
+  const [state, action, pending] = useActionState<ActionState, FormData>(
+    saveProduct,
+    {},
+  );
 
   const specsText = product?.specs
     ? Object.entries(product.specs)
@@ -35,7 +38,12 @@ export function ProductForm({
             <h2 className="mb-4 font-bold text-ink-950">Basics</h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Name (English) *" className="sm:col-span-2">
-                <input name="nameEn" defaultValue={product?.nameEn ?? ""} className="field" required />
+                <input
+                  name="nameEn"
+                  defaultValue={product?.nameEn ?? ""}
+                  className="field"
+                  required
+                />
               </Field>
               <Field label="Name (Arabic)" className="sm:col-span-2">
                 <input
@@ -46,13 +54,27 @@ export function ProductForm({
                 />
               </Field>
               <Field label="SKU *">
-                <input name="sku" defaultValue={product?.sku ?? ""} className="field" required />
+                <input
+                  name="sku"
+                  defaultValue={product?.sku ?? ""}
+                  className="field"
+                  required
+                />
               </Field>
               <Field label="Barcode (EAN/UPC)">
-                <input name="barcode" defaultValue={product?.barcode ?? ""} className="field" />
+                <input
+                  name="barcode"
+                  defaultValue={product?.barcode ?? ""}
+                  className="field"
+                />
               </Field>
               <Field label="Category *">
-                <select name="categoryId" defaultValue={product?.categoryId ?? ""} className="field" required>
+                <select
+                  name="categoryId"
+                  defaultValue={product?.categoryId ?? ""}
+                  className="field"
+                  required
+                >
                   <option value="">Choose…</option>
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -62,7 +84,11 @@ export function ProductForm({
                 </select>
               </Field>
               <Field label="Brand">
-                <select name="brandId" defaultValue={product?.brandId ?? ""} className="field">
+                <select
+                  name="brandId"
+                  defaultValue={product?.brandId ?? ""}
+                  className="field"
+                >
                   <option value="">—</option>
                   {brands.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -97,16 +123,30 @@ export function ProductForm({
                   name="specs"
                   defaultValue={specsText}
                   className="field min-h-32 font-mono text-xs"
-                  placeholder={"Display: 6.1\" OLED\nStorage: 256GB"}
+                  placeholder={'Display: 6.1" OLED\nStorage: 256GB'}
                 />
               </Field>
-              <Field label="Image URLs — one per line">
+              {/* <Field label="Image URLs — one per line">
                 <textarea
                   name="images"
                   defaultValue={(product?.images ?? []).join("\n")}
                   className="field min-h-20 font-mono text-xs"
                   placeholder="https://…/photo.jpg"
                 />
+              </Field> */}
+              <Field label="Product Images">
+                <input
+                  name="images"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  className="field"
+                />
+
+                <p className="mt-1 text-xs text-ink-400">
+                  Upload JPG, PNG, or WebP images. You can select multiple
+                  images.
+                </p>
               </Field>
             </div>
           </section>
@@ -156,10 +196,15 @@ export function ProductForm({
               {product ? (
                 <div className="rounded-lg bg-ink-50 p-3 text-sm">
                   <p className="text-ink-500">Current stock</p>
-                  <p className="text-2xl font-bold text-ink-950">{product.stock}</p>
+                  <p className="text-2xl font-bold text-ink-950">
+                    {product.stock}
+                  </p>
                   <p className="mt-1 text-xs text-ink-400">
                     Change it from{" "}
-                    <Link href="/admin/inventory" className="font-semibold text-brand-700">
+                    <Link
+                      href="/admin/inventory"
+                      className="font-semibold text-brand-700"
+                    >
                       Inventory
                     </Link>{" "}
                     so the movement is logged.
@@ -167,7 +212,13 @@ export function ProductForm({
                 </div>
               ) : (
                 <Field label="Opening stock">
-                  <input name="stock" type="number" min="0" defaultValue="0" className="field" />
+                  <input
+                    name="stock"
+                    type="number"
+                    min="0"
+                    defaultValue="0"
+                    className="field"
+                  />
                 </Field>
               )}
               <Field label="Reorder level (low-stock alert)">
@@ -226,7 +277,9 @@ export function ProductForm({
       </div>
 
       {state.error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{state.error}</p>
+        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          {state.error}
+        </p>
       )}
       {state.ok && state.message && (
         <p className="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
@@ -235,8 +288,16 @@ export function ProductForm({
       )}
 
       <div className="sticky bottom-0 flex gap-3 border-t border-ink-200 bg-white/90 py-3 backdrop-blur">
-        <button type="submit" disabled={pending} className="btn-primary disabled:opacity-60">
-          {pending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+        <button
+          type="submit"
+          disabled={pending}
+          className="btn-primary disabled:opacity-60"
+        >
+          {pending ? (
+            <Loader2 size={16} className="animate-spin" />
+          ) : (
+            <Save size={16} />
+          )}
           {product ? "Save changes" : "Create product"}
         </button>
         <Link href="/admin/products" className="btn-ghost">
@@ -258,7 +319,9 @@ function Field({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1 block text-xs font-medium text-ink-500">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-ink-500">
+        {label}
+      </span>
       {children}
     </label>
   );
