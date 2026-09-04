@@ -21,7 +21,7 @@ export const site = {
     zonesServed: "All of Qatar",
   },
 
-  hours: "Sat–Thu 9:00–21:00 · Fri 16:00–21:00",
+  hours: "Sat–Thu 8:00–23:00 · Fri 16:00–23:00",
 } as const;
 
 export function whatsappLink(message?: string) {
