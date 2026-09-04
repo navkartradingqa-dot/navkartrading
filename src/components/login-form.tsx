@@ -57,12 +57,7 @@ export function LoginForm({ variant = "admin" }: { variant?: "admin" | "pos" }) 
         Sign in
       </button>
 
-      <p className="mt-5 text-center text-[11px] leading-relaxed text-ink-400">
-        Seeded demo logins: admin@navkartrading.qa · manager@navkartrading.qa ·
-        cashier@navkartrading.qa
-        <br />
-        Password: the value of SEED_ADMIN_PASSWORD. Change these before going live.
-      </p>
+      
     </form>
   );
 }
