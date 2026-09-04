@@ -103,11 +103,11 @@ export function Footer({ categories }: { categories: Cat[] }) {
                 {t("nav.contact")}
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link href="/admin" className="hover:text-brand-700">
                 {t("nav.account")}
               </Link>
-            </li>
+            </li> */} 
           </ul>
 
           <a
