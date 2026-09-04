@@ -48,7 +48,7 @@ export function LoginForm({ variant = "admin" }: { variant?: "admin" | "pos" }) 
         />
       </label>
 
-      {state.error && (
+      /* {state.error && (
         <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">{state.error}</p>
       )}
 
@@ -62,7 +62,7 @@ export function LoginForm({ variant = "admin" }: { variant?: "admin" | "pos" }) 
         cashier@navkartrading.qa
         <br />
         Password: the value of SEED_ADMIN_PASSWORD. Change these before going live.
-      </p>
+      </p> */
     </form>
   );
 }
