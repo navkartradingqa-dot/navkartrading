@@ -86,15 +86,12 @@ export function AdminShell({
     <div className="flex min-h-dvh bg-ink-50 print:block print:bg-white">
       {/* desktop sidebar */}
       <aside className="hidden w-60 shrink-0 flex-col bg-ink-950 p-4 lg:flex print:hidden">
-        <Link href="/admin" className="mb-6 flex items-center gap-2.5 px-1">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-700 text-xs font-black text-white">
-            NT
-          </span>
-          <span className="flex flex-col leading-tight">
-            <span className="text-sm font-bold text-white">Navkar Trading</span>
-            <span className="text-[10px] text-ink-400">Back office</span>
-          </span>
-        </Link>
+        <Link href="/admin" className="mb-6 flex flex-col gap-1.5 px-1">
+  <span className="inline-flex w-fit rounded-lg bg-white p-1.5">
+    <img src="/Navkar-Logo.jpg" alt="Navkar Trading" className="h-8 w-auto" />
+  </span>
+  <span className="text-[10px] text-ink-400">Back office</span>
+</Link>
 
         {nav}
 
