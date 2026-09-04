@@ -3,7 +3,7 @@ export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "en";
 
 export const en = {
-  "brand.name": "Navkar Trading",
+  "brand.name": "Navkar Trading & Services",
   "brand.tagline": "Electronics & Mobiles — Doha, Qatar",
 
   "nav.home": "Home",
@@ -162,7 +162,7 @@ export const en = {
 export type Dict = Record<keyof typeof en, string>;
 
 export const ar: Dict = {
-  "brand.name": "نافكار للتجارة",
+  "brand.name": "نافكار للتجارة والخدمات",
   "brand.tagline": "إلكترونيات وهواتف — الدوحة، قطر",
 
   "nav.home": "الرئيسية",
