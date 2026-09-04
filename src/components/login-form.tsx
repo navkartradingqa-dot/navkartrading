@@ -48,21 +48,7 @@ export function LoginForm({ variant = "admin" }: { variant?: "admin" | "pos" }) 
         />
       </label>
 
-      /* {state.error && (
-        <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">{state.error}</p>
-      )}
-
-      <button type="submit" disabled={pending} className="btn-primary mt-5 w-full disabled:opacity-60">
-        {pending ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />}
-        Sign in
-      </button>
-
-      <p className="mt-5 text-center text-[11px] leading-relaxed text-ink-400">
-        Seeded demo logins: admin@navkartrading.qa · manager@navkartrading.qa ·
-        cashier@navkartrading.qa
-        <br />
-        Password: the value of SEED_ADMIN_PASSWORD. Change these before going live.
-      </p> */
+      
     </form>
   );
 }
