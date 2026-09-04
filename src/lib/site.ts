@@ -9,7 +9,7 @@ export const site = {
     "لابتوبات وهواتف وملحقات بضمان محلي. توصيل لكل قطر مع خيار الدفع عند الاستلام.",
   phone: process.env.NEXT_PUBLIC_SHOP_PHONE ?? "+974 55116627",
   whatsapp: process.env.NEXT_PUBLIC_SHOP_WHATSAPP ?? "97455116627",
-  email: process.env.NEXT_PUBLIC_SHOP_EMAIL ?? "sales@navkartrading.qa",
+  email: process.env.NEXT_PUBLIC_SHOP_EMAIL ?? "navkartrading.qa@gmail.com",
   address: "Doha, Qatar",
   addressAr: "الدوحة، قطر",
   currency: "QAR",
