@@ -95,7 +95,7 @@ export function Header({ categories }: { categories: Cat[] }) {
           </span>
           <span className="hidden flex-col leading-tight sm:flex">
             <span className="text-[25px] font-bold text-ink-950">{t("brand.name")}</span>
-            <span className="text-[10px] text-ink-400">{site.domain}</span>
+            <span className="text-[20px] text-ink-400">{site.domain}</span>
           </span>
         </Link>
 
