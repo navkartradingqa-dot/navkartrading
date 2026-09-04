@@ -120,10 +120,11 @@ export function Footer({ categories }: { categories: Cat[] }) {
             WhatsApp us
           </a>
 
+              {/*"Visa", "Mastercard", "Himyan", "Apple Pay", "Google Pay",*/}
           <div className="mt-5">
             <p className="mb-2 text-xs font-semibold text-ink-400">{t("footer.payments")}</p>
             <div className="flex flex-wrap gap-1.5">
-              {["Visa", "Mastercard", "Himyan", "Apple Pay", "Google Pay", "COD"].map((p) => (
+              {["COD"].map((p) => (
                 <span
                   key={p}
                   className="rounded border border-ink-200 bg-white px-2 py-1 text-[10px] font-medium text-ink-600"
