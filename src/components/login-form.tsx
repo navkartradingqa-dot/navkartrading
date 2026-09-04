@@ -16,7 +16,7 @@ export function LoginForm({ variant = "admin" }: { variant?: "admin" | "pos" }) 
           <p>Navkar Trading</p>
         </span>
         <div>
-        <img src="/Navkar-Logo.jpg" alt="Navkar Trading" className="h-[150px] w-auto object-contain" />
+        <img src="/Navkar-Logo.jpg" alt="Navkar Trading" className="h-[50px] w-auto object-contain" />
           <p className="text-xs text-ink-400">
             {variant === "pos" ? "Counter POS sign in" : "Admin & inventory sign in"}
           </p>
