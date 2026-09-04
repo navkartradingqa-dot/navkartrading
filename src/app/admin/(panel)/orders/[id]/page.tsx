@@ -15,7 +15,7 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ id:
   if (!order) notFound();
 
   const wa = `https://wa.me/${order.customerPhone.replace(/[^0-9]/g, "").replace(/^0+/, "")}?text=${encodeURIComponent(
-    `Hello ${order.customerName}, this is ${site.name} regarding your order ${order.orderNumber}.`,
+    `Hello ${order.customerName}, this is ${site.name} regarding your order ${order.orderNumber}. Current Status is ${order.status} `,
   )}`;
 
   const nextStatuses = STATUS_FLOW.filter((s) => s !== order.status);
