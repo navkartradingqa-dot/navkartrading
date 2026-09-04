@@ -91,7 +91,7 @@ export function Header({ categories }: { categories: Cat[] }) {
 
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-700 text-sm font-black text-white">
-            NT
+            <img src="/Navkar-Logo.jpg" alt="Navkar Trading" className="h-[50px] w-auto object-contain" />
           </span>
           <span className="hidden flex-col leading-tight sm:flex">
             <span className="text-[15px] font-bold text-ink-950">{t("brand.name")}</span>
