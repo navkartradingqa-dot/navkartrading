@@ -88,7 +88,7 @@ export function AdminShell({
       <aside className="hidden w-60 shrink-0 flex-col bg-ink-950 p-4 lg:flex print:hidden">
         <Link href="/admin" className="mb-6 flex flex-col gap-1.5 px-1">
   <span className="inline-flex w-fit rounded-lg bg-white p-1.5">
-    <img src="/Navkar-Logo.jpg" alt="Navkar Trading" className="h-8 w-auto" />
+    <img src="/Navkar-Logo.jpg" alt="Navkar Trading" className="h-[150px] w-auto object-contain" />
   </span>
   <span className="text-[10px] text-ink-400">Back office</span>
 </Link>
