@@ -13,10 +13,10 @@ export function LoginForm({ variant = "admin" }: { variant?: "admin" | "pos" }) 
     <form action={action} className="w-full max-w-sm rounded-2xl bg-white p-7 shadow-lg">
       <div className="mb-6 flex items-center gap-3">
         <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-700 text-sm font-black text-white">
-          <p>Navkar Trading</p>
+          <img src="/Navkar-Logo.jpg" alt="Navkar Trading" className="h-[50px] w-auto object-contain" />
         </span>
         <div>
-        <img src="/Navkar-Logo.jpg" alt="Navkar Trading" className="h-[50px] w-auto object-contain" />
+          <p className="font-bold text-ink-950">Navkar Trading</p>
           <p className="text-xs text-ink-400">
             {variant === "pos" ? "Counter POS sign in" : "Admin & inventory sign in"}
           </p>
