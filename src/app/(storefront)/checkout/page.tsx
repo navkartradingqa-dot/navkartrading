@@ -89,7 +89,7 @@ export default function CheckoutPage() {
       if (data.redirectUrl) {
         window.location.href = data.redirectUrl;
       } else {
-        router.push(`/order/${data.trackingToken}`);
+        router.push(`/order/${data.trackingToken}?placed=1`);
       }
     } catch {
       setError("Network error. Please check your connection and try again.");
