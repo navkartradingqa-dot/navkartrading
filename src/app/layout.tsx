@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     locale: "en_QA",
     alternateLocale: "ar_QA",
   },
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/Navkar-Logo.jpg" },
 };
 
 export const viewport: Viewport = {
