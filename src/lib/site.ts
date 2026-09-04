@@ -1,6 +1,6 @@
 export const site = {
-  name: "Navkar Trading",
-  nameAr: "نافكار للتجارة",
+  name: "Navkar Trading & Services",
+  nameAr: "نافكار للتجارة والخدمات",
   domain: "navkartrading.qa",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://navkartrading.qa",
   description:
