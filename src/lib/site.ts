@@ -16,7 +16,7 @@ export const site = {
 
   /** Delivery rules — edit here, they apply to storefront and checkout. */
   delivery: {
-    fee: "25.00",
+    fee: "10.00",
     freeOver: "300.00",
     zonesServed: "All of Qatar",
   },
