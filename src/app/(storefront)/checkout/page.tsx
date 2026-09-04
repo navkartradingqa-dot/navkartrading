@@ -11,6 +11,42 @@ import { site } from "@/lib/site";
 
 type Method = "COD" | "CARD_ONLINE";
 
+/**
+ * Builds a wa.me link addressed to the shop's WhatsApp number, with the
+ * order details pre-filled. The customer taps send.
+ */
+function buildSellerWhatsApp(o: {
+  orderNumber?: string;
+  trackingToken?: string;
+  name: string;
+  phone: string;
+  total: number;
+  payment: string;
+  items: string[];
+}) {
+  const track = o.trackingToken ? `${site.url}/order/${o.trackingToken}` : "-";
+
+  const text = [
+    "New order — Navkar Trading",
+    "",
+    `Order: ${o.orderNumber ?? "-"}`,
+    `Name: ${o.name}`,
+    `Phone: ${o.phone}`,
+    `Total: QAR ${o.total.toFixed(2)}`,
+    `Payment: ${o.payment}`,
+    "",
+    "Items:",
+    ...o.items.map((i) => `• ${i}`),
+    "",
+    `Track: ${track}`,
+  ].join("\n");
+
+  // wa.me needs digits only — strip any +, spaces or dashes from the env value.
+  const number = String(site.whatsapp).replace(/\D/g, "");
+
+  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+}
+
 export default function CheckoutPage() {
   const { lines, subtotal, clear, ready } = useCart();
   const { t, locale } = useLocale();
@@ -52,7 +88,16 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Snapshot the cart lines now — clear() wipes them before we build the message.
+    const itemLines = lines.map(
+      (l) => `${l.qty} × ${locale === "ar" ? l.nameAr : l.nameEn}`,
+    );
+
     setBusy(true);
+
+    // Must open BEFORE any await, or the browser treats it as a blocked popup.
+    const waTab = window.open("", "_blank");
+
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -75,13 +120,34 @@ export default function CheckoutPage() {
       const data = (await res.json()) as {
         ok?: boolean;
         error?: string;
+        orderNumber?: string;
         trackingToken?: string;
         redirectUrl?: string;
       };
 
       if (!res.ok || !data.ok) {
+        waTab?.close();
         setError(data.error ?? "Something went wrong. Please try again.");
         setBusy(false);
+        return;
+      }
+
+      // Order is saved — point the waiting tab at WhatsApp.
+      const waUrl = buildSellerWhatsApp({
+        orderNumber: data.orderNumber,
+        trackingToken: data.trackingToken,
+        name: form.name,
+        phone: form.phone,
+        total,
+        payment: method === "COD" ? "Cash on delivery" : "Card online",
+        items: itemLines,
+      });
+
+      if (waTab) {
+        waTab.location.href = waUrl;
+      } else {
+        // Popup was blocked — fall back to the current tab.
+        window.location.href = waUrl;
         return;
       }
 
@@ -92,6 +158,7 @@ export default function CheckoutPage() {
         router.push(`/order/${data.trackingToken}?placed=1`);
       }
     } catch {
+      waTab?.close();
       setError("Network error. Please check your connection and try again.");
       setBusy(false);
     }
@@ -312,6 +379,12 @@ export default function CheckoutPage() {
               {busy && <Loader2 size={16} className="animate-spin" />}
               {busy ? t("checkout.processing") : t("checkout.placeOrder")}
             </button>
+
+            <p className="mt-2 text-center text-xs text-ink-400">
+              {locale === "ar"
+                ? "سيتم فتح واتساب لتأكيد طلبك معنا."
+                : "WhatsApp will open so you can confirm your order with us."}
+            </p>
 
             <Link
               href="/cart"
