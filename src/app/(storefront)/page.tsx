@@ -72,7 +72,7 @@ export default async function HomePage() {
             nameEn: c.nameEn,
             nameAr: c.nameAr,
             icon: c.icon,
-            {/* count: counts.get(c.id) ?? 0, */}
+            /* count: counts.get(c.id) ?? 0, */
            
           }))}
         />
