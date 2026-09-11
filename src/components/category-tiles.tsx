@@ -44,7 +44,7 @@ const ICONS: Record<string, LucideIcon> = {
 export function CategoryTiles({
   categories,
 }: {
-  categories: { slug: string; nameEn: string; nameAr: string; icon: string; }[]; {/* count: number */}
+  categories: { slug: string; nameEn: string; nameAr: string; icon: string; count: number }[];
 }) {
   const { locale } = useLocale();
 
