@@ -44,7 +44,7 @@ const ICONS: Record<string, LucideIcon> = {
 export function CategoryTiles({
   categories,
 }: {
-  categories: { slug: string; nameEn: string; nameAr: string; icon: string; count: number }[];
+  categories: { slug: string; nameEn: string; nameAr: string; icon: string; }[]; {/* count: number */}
 }) {
   const { locale } = useLocale();
 
@@ -64,7 +64,7 @@ export function CategoryTiles({
             <span className="text-xs leading-tight font-medium text-ink-800">
               {locale === "ar" ? c.nameAr : c.nameEn}
             </span>
-            <span className="text-[10px] text-ink-400">{c.count}</span>
+            {/* <span className="text-[10px] text-ink-400">{c.count}</span> */} 
           </Link>
         );
       })}
