@@ -180,16 +180,18 @@ export function Header({ categories }: { categories: Cat[] }) {
               </div>
             )}
           </div>
-
-          {categories.slice(0, 7).map((c) => (
-            <Link
-              key={c.slug}
-              href={`/category/${c.slug}`}
-              className="px-3 py-2.5 text-sm text-ink-600 hover:text-brand-700"
-            >
-              {catName(c)}
-            </Link>
-          ))}
+  
+          {[...categories.slice(0, 7), categories[15]]
+  .filter(Boolean) // avoids errors if index 15 doesn't exist
+  .map((c) => (
+    <Link
+      key={c.slug}
+      href={`/category/${c.slug}`}
+      className="px-3 py-2.5 text-sm text-ink-600 hover:text-brand-700"
+    >
+      {catName(c)}
+    </Link>
+  ))}
           <Link href="/shop?deals=1" className="px-3 py-2.5 text-sm font-semibold text-brand-700">
             {t("nav.deals")}
           </Link>
