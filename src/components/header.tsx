@@ -190,7 +190,14 @@ export function Header({ categories }: { categories: Cat[] }) {
               {catName(c)}
             </Link>
           ))}
-          
+          {categories[15] && (
+  <Link
+    href={`/category/${categories[15].slug}`}
+    className="px-3 py-2.5 text-sm font-semibold text-brand-700"
+  >
+    {catName(categories[15])}
+  </Link>
+)}
           <Link href="/shop?deals=1" className="px-3 py-2.5 text-sm font-semibold text-brand-700">
             {t("nav.deals")}
           </Link>
