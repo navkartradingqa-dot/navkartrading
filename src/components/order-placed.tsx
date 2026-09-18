@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Copy, Check, MessageCircle } from "lucide-react";
+import { CheckCircle2, Copy, Check } from "lucide-react";
 
 type Props = {
   orderNumber: string;
@@ -14,7 +14,6 @@ type Props = {
   codeLabel?: string;
   copyLabel?: string;
   copiedLabel?: string;
-  whatsappLabel?: string;
   lookupNote?: string;
 };
 
@@ -27,7 +26,6 @@ export function OrderPlaced({
   codeLabel = "Your tracking code",
   copyLabel = "Copy code",
   copiedLabel = "Copied",
-  whatsappLabel = "Save to WhatsApp",
   lookupNote = "Lost the code? You can also find this order using the mobile number you ordered with.",
 }: Props) {
   const [copied, setCopied] = useState(false);
@@ -54,10 +52,6 @@ export function OrderPlaced({
       // Clipboard blocked — the code is on screen, so the user can still write it down.
     }
   }
-
-  const waText = encodeURIComponent(
-    `Navkar Trading order ${orderNumber}\nTracking code: ${trackingToken}\nTrack it here: https://navkartrading.qa/order/${trackingToken}`,
-  );
 
   return (
     <div className="mb-6 overflow-hidden rounded-xl border border-emerald-200 bg-emerald-50">
@@ -97,16 +91,6 @@ export function OrderPlaced({
           </p>
 
           <p className="mt-3 text-sm text-ink-600">{saveNote}</p>
-
-          <a
-            href={`https://wa.me/?text=${waText}`}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-          >
-            <MessageCircle size={16} />
-            {whatsappLabel}
-          </a>
         </div>
 
         <p className="mt-3 text-xs text-emerald-700">{lookupNote}</p>

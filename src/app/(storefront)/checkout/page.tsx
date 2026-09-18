@@ -11,42 +11,6 @@ import { site } from "@/lib/site";
 
 type Method = "COD" | "CARD_ONLINE";
 
-/**
- * Builds a wa.me link addressed to the shop's WhatsApp number, with the
- * order details pre-filled. The customer taps send.
- */
-function buildSellerWhatsApp(o: {
-  orderNumber?: string;
-  trackingToken?: string;
-  name: string;
-  phone: string;
-  total: number;
-  payment: string;
-  items: string[];
-}) {
-  const track = o.trackingToken ? `${site.url}/order/${o.trackingToken}` : "-";
-
-  const text = [
-    "New order — Navkar Trading",
-    "",
-    `Order: ${o.orderNumber ?? "-"}`,
-    `Name: ${o.name}`,
-    `Phone: ${o.phone}`,
-    `Total: QAR ${o.total.toFixed(2)}`,
-    `Payment: ${o.payment}`,
-    "",
-    "Items:",
-    ...o.items.map((i) => `• ${i}`),
-    "",
-    `Track: ${track}`,
-  ].join("\n");
-
-  // wa.me needs digits only — strip any +, spaces or dashes from the env value.
-  const number = String(site.whatsapp).replace(/\D/g, "");
-
-  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
-}
-
 export default function CheckoutPage() {
   const { lines, subtotal, clear, ready } = useCart();
   const { t, locale } = useLocale();
@@ -88,15 +52,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    // Snapshot the cart lines now — clear() wipes them before we build the message.
-    const itemLines = lines.map(
-      (l) => `${l.qty} × ${locale === "ar" ? l.nameAr : l.nameEn}`,
-    );
-
     setBusy(true);
-
-    // Must open BEFORE any await, or the browser treats it as a blocked popup.
-    const waTab = window.open("", "_blank");
 
     try {
       const res = await fetch("/api/checkout", {
@@ -126,28 +82,8 @@ export default function CheckoutPage() {
       };
 
       if (!res.ok || !data.ok) {
-        waTab?.close();
         setError(data.error ?? "Something went wrong. Please try again.");
         setBusy(false);
-        return;
-      }
-
-      // Order is saved — point the waiting tab at WhatsApp.
-      const waUrl = buildSellerWhatsApp({
-        orderNumber: data.orderNumber,
-        trackingToken: data.trackingToken,
-        name: form.name,
-        phone: form.phone,
-        total,
-        payment: method === "COD" ? "Cash on delivery" : "Card online",
-        items: itemLines,
-      });
-
-      if (waTab) {
-        waTab.location.href = waUrl;
-      } else {
-        // Popup was blocked — fall back to the current tab.
-        window.location.href = waUrl;
         return;
       }
 
@@ -158,7 +94,6 @@ export default function CheckoutPage() {
         router.push(`/order/${data.trackingToken}?placed=1`);
       }
     } catch {
-      waTab?.close();
       setError("Network error. Please check your connection and try again.");
       setBusy(false);
     }
@@ -174,12 +109,16 @@ export default function CheckoutPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="mb-6 text-2xl font-bold text-ink-950">{t("checkout.title")}</h1>
+      <h1 className="mb-6 text-2xl font-bold text-ink-950">
+        {t("checkout.title")}
+      </h1>
 
       <form onSubmit={submit} className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-5">
           <section className="card p-5">
-            <h2 className="mb-4 font-bold text-ink-950">{t("checkout.contact")}</h2>
+            <h2 className="mb-4 font-bold text-ink-950">
+              {t("checkout.contact")}
+            </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block">
                 <span className="mb-1 block text-xs font-medium text-ink-500">
@@ -221,7 +160,9 @@ export default function CheckoutPage() {
           </section>
 
           <section className="card p-5">
-            <h2 className="mb-4 font-bold text-ink-950">{t("checkout.delivery")}</h2>
+            <h2 className="mb-4 font-bold text-ink-950">
+              {t("checkout.delivery")}
+            </h2>
             <div className="grid gap-3 sm:grid-cols-3">
               <label className="block">
                 <span className="mb-1 block text-xs font-medium text-ink-500">
@@ -291,24 +232,24 @@ export default function CheckoutPage() {
           </section>
 
           <section className="card p-5">
-            <h2 className="mb-4 font-bold text-ink-950">{t("checkout.payment")}</h2>
+            <h2 className="mb-4 font-bold text-ink-950">
+              {t("checkout.payment")}
+            </h2>
             <div className="grid gap-3 sm:grid-cols-2">
-              {(
-                [
-                  {
-                    id: "COD" as const,
-                    icon: Banknote,
-                    title: t("checkout.pay.cod"),
-                    sub: t("checkout.pay.cod.sub"),
-                  },
-                  {
-                    id: "CARD_ONLINE" as const,
-                    icon: CreditCard,
-                    title: t("checkout.pay.card"),
-                    sub: t("checkout.pay.card.sub"),
-                  },
-                ]
-              ).map((opt) => (
+              {[
+                {
+                  id: "COD" as const,
+                  icon: Banknote,
+                  title: t("checkout.pay.cod"),
+                  sub: t("checkout.pay.cod.sub"),
+                },
+                {
+                  id: "CARD_ONLINE" as const,
+                  icon: CreditCard,
+                  title: t("checkout.pay.card"),
+                  sub: t("checkout.pay.card.sub"),
+                },
+              ].map((opt) => (
                 <button
                   key={opt.id}
                   type="button"
@@ -319,10 +260,17 @@ export default function CheckoutPage() {
                       : "border-ink-200 hover:border-ink-300"
                   }`}
                 >
-                  <opt.icon size={20} className="mt-0.5 shrink-0 text-brand-700" />
+                  <opt.icon
+                    size={20}
+                    className="mt-0.5 shrink-0 text-brand-700"
+                  />
                   <span>
-                    <span className="block text-sm font-semibold text-ink-900">{opt.title}</span>
-                    <span className="mt-0.5 block text-xs text-ink-500">{opt.sub}</span>
+                    <span className="block text-sm font-semibold text-ink-900">
+                      {opt.title}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-ink-500">
+                      {opt.sub}
+                    </span>
                   </span>
                 </button>
               ))}
@@ -332,7 +280,9 @@ export default function CheckoutPage() {
 
         <div>
           <div className="card sticky top-40 p-5">
-            <h2 className="mb-4 font-bold text-ink-950">{t("checkout.summary")}</h2>
+            <h2 className="mb-4 font-bold text-ink-950">
+              {t("checkout.summary")}
+            </h2>
 
             <ul className="mb-4 max-h-56 space-y-2 overflow-y-auto text-sm">
               {lines.map((l) => (
@@ -364,7 +314,9 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between border-t border-ink-100 pt-3 text-base">
                 <dt className="font-bold">{t("cart.total")}</dt>
-                <dd className="font-bold text-brand-800">{formatMoney(total, locale)}</dd>
+                <dd className="font-bold text-brand-800">
+                  {formatMoney(total, locale)}
+                </dd>
               </div>
             </dl>
 
@@ -375,16 +327,14 @@ export default function CheckoutPage() {
               </p>
             )}
 
-            <button type="submit" disabled={busy} className="btn-primary mt-5 w-full disabled:opacity-60">
+            <button
+              type="submit"
+              disabled={busy}
+              className="btn-primary mt-5 w-full disabled:opacity-60"
+            >
               {busy && <Loader2 size={16} className="animate-spin" />}
               {busy ? t("checkout.processing") : t("checkout.placeOrder")}
             </button>
-
-            <p className="mt-2 text-center text-xs text-ink-400">
-              {locale === "ar"
-                ? "سيتم فتح واتساب لتأكيد طلبك معنا."
-                : "WhatsApp will open so you can confirm your order with us."}
-            </p>
 
             <Link
               href="/cart"

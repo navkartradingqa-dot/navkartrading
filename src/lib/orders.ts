@@ -13,8 +13,15 @@ import {
   type PaymentStatus,
 } from "@/db/schema";
 import { createId, createOrderNumber, createTrackingToken } from "./id";
-import { addMoney, multiplyMoney, subtractMoney, toFils, fromFils } from "./money";
+import {
+  addMoney,
+  multiplyMoney,
+  subtractMoney,
+  toFils,
+  fromFils,
+} from "./money";
 import { site } from "./site";
+import { sendOrderStatusEmail } from "@/lib/email/order-email";
 
 export type CartInput = { productId: string; qty: number }[];
 
@@ -58,18 +65,187 @@ export class OrderError extends Error {
  * simultaneous buyers can never take the shop below zero — whoever loses the
  * race gets an OUT_OF_STOCK error instead of an oversell.
  */
+// export async function createOrder(input: CreateOrderInput) {
+//   if (!input.items.length)
+//     throw new OrderError("EMPTY_CART", "The cart is empty.");
+
+//   const ids = input.items.map((i) => i.productId);
+//   const rows = await db
+//     .select()
+//     .from(products)
+//     .where(inArray(products.id, ids));
+//   const byId = new Map(rows.map((p) => [p.id, p]));
+
+//   for (const item of input.items) {
+//     const product = byId.get(item.productId);
+//     if (!product)
+//       throw new OrderError(
+//         "NOT_FOUND",
+//         `Product ${item.productId} no longer exists.`,
+//       );
+//     if (!product.active)
+//       throw new OrderError(
+//         "INACTIVE",
+//         `${product.nameEn} is no longer for sale.`,
+//       );
+//     if (item.qty < 1)
+//       throw new OrderError("BAD_QTY", "Quantity must be at least 1.");
+//     if (product.stock < item.qty) {
+//       throw new OrderError(
+//         "OUT_OF_STOCK",
+//         `Only ${product.stock} left of ${product.nameEn}. Please adjust the quantity.`,
+//       );
+//     }
+//   }
+
+//   const lines = input.items.map((item) => {
+//     const product = byId.get(item.productId)!;
+//     return {
+//       product,
+//       qty: item.qty,
+//       lineTotal: multiplyMoney(product.price, item.qty),
+//     };
+//   });
+
+//   const subtotal = addMoney(...lines.map((l) => l.lineTotal));
+//   const discount = input.discount ?? "0.00";
+//   const afterDiscount = subtractMoney(subtotal, discount);
+
+//   const freeDelivery =
+//     input.forceFreeDelivery ||
+//     input.channel === "POS" ||
+//     toFils(afterDiscount) >= toFils(site.delivery.freeOver);
+//   const deliveryFee = freeDelivery ? "0.00" : site.delivery.fee;
+//   const total = addMoney(afterDiscount, deliveryFee);
+
+//   if (toFils(total) < 0)
+//     throw new OrderError("BAD_TOTAL", "Discount exceeds the order value.");
+
+//   const orderId = createId();
+//   const orderNumber = createOrderNumber();
+//   const trackingToken = createTrackingToken();
+//   const status: OrderStatus =
+//     input.status ?? (input.channel === "POS" ? "COMPLETED" : "PENDING");
+//   const paymentStatus: PaymentStatus = input.paymentStatus ?? "UNPAID";
+
+//   await db.transaction(async (tx) => {
+//     // 1. Reserve stock first — the conditional update is the safety net.
+//     for (const { product, qty } of lines) {
+//       const updated = await tx
+//         .update(products)
+//         .set({ stock: sql`${products.stock} - ${qty}`, updatedAt: new Date() })
+//         .where(and(eq(products.id, product.id), gte(products.stock, qty)))
+//         .returning({ id: products.id, stock: products.stock });
+
+//       if (!updated.length) {
+//         throw new OrderError(
+//           "OUT_OF_STOCK",
+//           `${product.nameEn} sold out while you were checking out.`,
+//         );
+//       }
+
+//       await tx.insert(stockMovements).values({
+//         id: createId(),
+//         productId: product.id,
+//         delta: -qty,
+//         balance: updated[0].stock,
+//         type: input.channel === "POS" ? "POS_SALE" : "SALE",
+//         reference: orderNumber,
+//         userId: input.cashierId ?? null,
+//       });
+//     }
+
+//     // 2. Write the order.
+//     await tx.insert(orders).values({
+//       id: orderId,
+//       orderNumber,
+//       trackingToken,
+//       channel: input.channel,
+//       status,
+//       paymentStatus,
+//       paymentMethod: input.paymentMethod,
+//       customerName: input.customerName,
+//       customerPhone: input.customerPhone,
+//       customerEmail: input.customerEmail ?? null,
+//       addressLine: input.addressLine ?? null,
+//       zone: input.zone ?? null,
+//       streetNumber: input.streetNumber ?? null,
+//       buildingNumber: input.buildingNumber ?? null,
+//       city: input.city ?? "Doha",
+//       notes: input.notes ?? null,
+//       subtotal,
+//       deliveryFee,
+//       discount,
+//       total,
+//       cashierId: input.cashierId ?? null,
+//       shiftId: input.shiftId ?? null,
+//       cashReceived: input.cashReceived ?? null,
+//       changeGiven:
+//         input.cashReceived != null
+//           ? fromFils(Math.max(0, toFils(input.cashReceived) - toFils(total)))
+//           : null,
+//       cashAmount: input.cashAmount ?? null,
+//       cardAmount: input.cardAmount ?? null,
+//     });
+
+//     await tx.insert(orderItems).values(
+//       lines.map(({ product, qty, lineTotal }) => ({
+//         id: createId(),
+//         orderId,
+//         productId: product.id,
+//         sku: product.sku,
+//         nameEn: product.nameEn,
+//         nameAr: product.nameAr,
+//         unitPrice: product.price,
+//         qty,
+//         lineTotal,
+//       })),
+//     );
+
+//     await tx.insert(orderEvents).values({
+//       id: createId(),
+//       orderId,
+//       status,
+//       note: input.channel === "POS" ? "Counter sale" : "Order placed online",
+//     });
+//   });
+
+//   return {
+//     id: orderId,
+//     orderNumber,
+//     trackingToken,
+//     total,
+//     subtotal,
+//     deliveryFee,
+//     discount,
+//   };
+// }
+
 export async function createOrder(input: CreateOrderInput) {
-  if (!input.items.length) throw new OrderError("EMPTY_CART", "The cart is empty.");
+  if (!input.items.length)
+    throw new OrderError("EMPTY_CART", "The cart is empty.");
 
   const ids = input.items.map((i) => i.productId);
-  const rows = await db.select().from(products).where(inArray(products.id, ids));
+  const rows = await db
+    .select()
+    .from(products)
+    .where(inArray(products.id, ids));
   const byId = new Map(rows.map((p) => [p.id, p]));
 
   for (const item of input.items) {
     const product = byId.get(item.productId);
-    if (!product) throw new OrderError("NOT_FOUND", `Product ${item.productId} no longer exists.`);
-    if (!product.active) throw new OrderError("INACTIVE", `${product.nameEn} is no longer for sale.`);
-    if (item.qty < 1) throw new OrderError("BAD_QTY", "Quantity must be at least 1.");
+    if (!product)
+      throw new OrderError(
+        "NOT_FOUND",
+        `Product ${item.productId} no longer exists.`,
+      );
+    if (!product.active)
+      throw new OrderError(
+        "INACTIVE",
+        `${product.nameEn} is no longer for sale.`,
+      );
+    if (item.qty < 1)
+      throw new OrderError("BAD_QTY", "Quantity must be at least 1.");
     if (product.stock < item.qty) {
       throw new OrderError(
         "OUT_OF_STOCK",
@@ -98,12 +274,14 @@ export async function createOrder(input: CreateOrderInput) {
   const deliveryFee = freeDelivery ? "0.00" : site.delivery.fee;
   const total = addMoney(afterDiscount, deliveryFee);
 
-  if (toFils(total) < 0) throw new OrderError("BAD_TOTAL", "Discount exceeds the order value.");
+  if (toFils(total) < 0)
+    throw new OrderError("BAD_TOTAL", "Discount exceeds the order value.");
 
   const orderId = createId();
   const orderNumber = createOrderNumber();
   const trackingToken = createTrackingToken();
-  const status: OrderStatus = input.status ?? (input.channel === "POS" ? "COMPLETED" : "PENDING");
+  const status: OrderStatus =
+    input.status ?? (input.channel === "POS" ? "COMPLETED" : "PENDING");
   const paymentStatus: PaymentStatus = input.paymentStatus ?? "UNPAID";
 
   await db.transaction(async (tx) => {
@@ -188,7 +366,36 @@ export async function createOrder(input: CreateOrderInput) {
     });
   });
 
-  return { id: orderId, orderNumber, trackingToken, total, subtotal, deliveryFee, discount };
+  // 3. Transaction succeeded — now send the confirmation email (online orders only).
+  if (input.channel === "ONLINE") {
+    try {
+      await sendOrderStatusEmail({
+        orderNumber,
+        customerName: input.customerName,
+        customerEmail: input.customerEmail ?? null,
+        customerPhone: input.customerPhone,
+        total,
+        currency: "QAR",
+        status,
+        note: "Order placed online",
+      });
+    } catch (error) {
+      console.error(
+        `Failed to send order confirmation email for ${orderNumber}:`,
+        error,
+      );
+    }
+  }
+
+  return {
+    id: orderId,
+    orderNumber,
+    trackingToken,
+    total,
+    subtotal,
+    deliveryFee,
+    discount,
+  };
 }
 
 /* ------------------------------------------------------------------ reads */
@@ -204,7 +411,11 @@ export async function getOrderByToken(token: string) {
 }
 
 export async function getOrderById(id: string) {
-  const [order] = await db.select().from(orders).where(eq(orders.id, id)).limit(1);
+  const [order] = await db
+    .select()
+    .from(orders)
+    .where(eq(orders.id, id))
+    .limit(1);
   if (!order) return null;
   return hydrate(order);
 }
@@ -226,7 +437,9 @@ export async function getLatestOrderByPhone(phone: string) {
   const [order] = await db
     .select()
     .from(orders)
-    .where(sql`right(regexp_replace(${orders.customerPhone}, '[^0-9]', '', 'g'), 8) = ${normalised}`)
+    .where(
+      sql`right(regexp_replace(${orders.customerPhone}, '[^0-9]', '', 'g'), 8) = ${normalised}`,
+    )
     .orderBy(desc(orders.createdAt))
     .limit(1);
   if (!order) return null;
@@ -258,9 +471,55 @@ export const STATUS_FLOW: OrderStatus[] = [
   "COMPLETED",
 ];
 
-export async function setOrderStatus(orderId: string, status: OrderStatus, note?: string) {
+// export async function setOrderStatus(orderId: string, status: OrderStatus, note?: string) {
+//   await db.transaction(async (tx) => {
+//     await tx.update(orders).set({ status, updatedAt: new Date() }).where(eq(orders.id, orderId));
+//     await tx.insert(orderEvents).values({
+//       id: createId(),
+//       orderId,
+//       status,
+//       note: note ?? null,
+//     });
+
+//     // Delivered COD orders are paid the moment the driver hands them over.
+//     if (status === "DELIVERED" || status === "COMPLETED") {
+//       await tx
+//         .update(orders)
+//         .set({ paymentStatus: "PAID" })
+//         .where(and(eq(orders.id, orderId), eq(orders.paymentMethod, "COD")));
+//     }
+//   });
+// }
+
+export async function setOrderStatus(
+  orderId: string,
+  status: OrderStatus,
+  note?: string,
+) {
+  const [order] = await db
+    .select()
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1);
+
+  if (!order) {
+    throw new OrderError("NOT_FOUND", "Order not found.");
+  }
+
+  // Don't create duplicate events/emails
+  if (order.status === status) {
+    return;
+  }
+
   await db.transaction(async (tx) => {
-    await tx.update(orders).set({ status, updatedAt: new Date() }).where(eq(orders.id, orderId));
+    await tx
+      .update(orders)
+      .set({
+        status,
+        updatedAt: new Date(),
+      })
+      .where(eq(orders.id, orderId));
+
     await tx.insert(orderEvents).values({
       id: createId(),
       orderId,
@@ -268,7 +527,7 @@ export async function setOrderStatus(orderId: string, status: OrderStatus, note?
       note: note ?? null,
     });
 
-    // Delivered COD orders are paid the moment the driver hands them over.
+    // Delivered COD orders are paid when handed over.
     if (status === "DELIVERED" || status === "COMPLETED") {
       await tx
         .update(orders)
@@ -276,9 +535,31 @@ export async function setOrderStatus(orderId: string, status: OrderStatus, note?
         .where(and(eq(orders.id, orderId), eq(orders.paymentMethod, "COD")));
     }
   });
+
+  // Send email AFTER successful DB transaction.
+  try {
+    await sendOrderStatusEmail({
+      orderNumber: order.orderNumber,
+      customerName: order.customerName,
+      customerEmail: order.customerEmail,
+      customerPhone: order.customerPhone,
+      total: order.total,
+      currency: order.currency,
+      status,
+      note,
+    });
+  } catch (error) {
+    console.error(
+      `Failed to send order status email for ${order.orderNumber}:`,
+      error,
+    );
+  }
 }
 
-export async function setPaymentStatus(orderId: string, paymentStatus: PaymentStatus) {
+export async function setPaymentStatus(
+  orderId: string,
+  paymentStatus: PaymentStatus,
+) {
   await db
     .update(orders)
     .set({ paymentStatus, updatedAt: new Date() })
@@ -286,18 +567,77 @@ export async function setPaymentStatus(orderId: string, paymentStatus: PaymentSt
 }
 
 /** Cancel an order and return every line back to stock. */
-export async function cancelOrder(orderId: string, note?: string) {
-  await db.transaction(async (tx) => {
-    const [order] = await tx.select().from(orders).where(eq(orders.id, orderId)).limit(1);
-    if (!order) throw new OrderError("NOT_FOUND", "Order not found.");
-    if (order.status === "CANCELLED") return;
+// export async function cancelOrder(orderId: string, note?: string) {
+//   await db.transaction(async (tx) => {
+//     const [order] = await tx.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+//     if (!order) throw new OrderError("NOT_FOUND", "Order not found.");
+//     if (order.status === "CANCELLED") return;
 
-    const items = await tx.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+//     const items = await tx.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+//     for (const item of items) {
+//       if (!item.productId) continue;
+//       const updated = await tx
+//         .update(products)
+//         .set({ stock: sql`${products.stock} + ${item.qty}`, updatedAt: new Date() })
+//         .where(eq(products.id, item.productId))
+//         .returning({ stock: products.stock });
+
+//       if (updated.length) {
+//         await tx.insert(stockMovements).values({
+//           id: createId(),
+//           productId: item.productId,
+//           delta: item.qty,
+//           balance: updated[0].stock,
+//           type: "RETURN",
+//           reference: order.orderNumber,
+//           note: "Order cancelled — stock returned",
+//         });
+//       }
+//     }
+
+//     await tx
+//       .update(orders)
+//       .set({ status: "CANCELLED", updatedAt: new Date() })
+//       .where(eq(orders.id, orderId));
+//     await tx.insert(orderEvents).values({
+//       id: createId(),
+//       orderId,
+//       status: "CANCELLED",
+//       note: note ?? "Cancelled",
+//     });
+//   });
+// }
+
+export async function cancelOrder(orderId: string, note?: string) {
+  const [order] = await db
+    .select()
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1);
+
+  if (!order) {
+    throw new OrderError("NOT_FOUND", "Order not found.");
+  }
+
+  if (order.status === "CANCELLED") {
+    return;
+  }
+
+  await db.transaction(async (tx) => {
+    const items = await tx
+      .select()
+      .from(orderItems)
+      .where(eq(orderItems.orderId, orderId));
+
     for (const item of items) {
       if (!item.productId) continue;
+
       const updated = await tx
         .update(products)
-        .set({ stock: sql`${products.stock} + ${item.qty}`, updatedAt: new Date() })
+        .set({
+          stock: sql`${products.stock} + ${item.qty}`,
+          updatedAt: new Date(),
+        })
         .where(eq(products.id, item.productId))
         .returning({ stock: products.stock });
 
@@ -316,8 +656,12 @@ export async function cancelOrder(orderId: string, note?: string) {
 
     await tx
       .update(orders)
-      .set({ status: "CANCELLED", updatedAt: new Date() })
+      .set({
+        status: "CANCELLED",
+        updatedAt: new Date(),
+      })
       .where(eq(orders.id, orderId));
+
     await tx.insert(orderEvents).values({
       id: createId(),
       orderId,
@@ -325,6 +669,24 @@ export async function cancelOrder(orderId: string, note?: string) {
       note: note ?? "Cancelled",
     });
   });
+
+  try {
+    await sendOrderStatusEmail({
+      orderNumber: order.orderNumber,
+      customerName: order.customerName,
+      customerEmail: order.customerEmail,
+      customerPhone: order.customerPhone,
+      total: order.total,
+      currency: order.currency,
+      status: "CANCELLED",
+      note: note ?? "Cancelled",
+    });
+  } catch (error) {
+    console.error(
+      `Failed to send cancellation email for ${order.orderNumber}:`,
+      error,
+    );
+  }
 }
 
 export async function recordPayment(opts: {
