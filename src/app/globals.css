@@ -142,3 +142,17 @@ input[type="number"] {
 .receipt {
   font-family: ui-monospace, "Courier New", monospace;
 }
+
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(200%);
+  }
+}

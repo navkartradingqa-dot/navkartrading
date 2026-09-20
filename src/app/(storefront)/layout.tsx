@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { getCategories } from "@/lib/catalog";
-
+import { PageTransition } from "@/components/page-transition";
 export const dynamic = "force-dynamic";
 
 export default async function StorefrontLayout({ children }: { children: React.ReactNode }) {

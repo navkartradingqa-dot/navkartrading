@@ -3,6 +3,7 @@ import "./globals.css";
 import { getLocale } from "@/i18n/server";
 import { LocaleProvider } from "@/i18n/client";
 import { CartProvider } from "@/components/cart-context";
+import { PageTransition } from "@/components/page-transition";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -27,7 +28,11 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const locale = await getLocale();
   const dir = locale === "ar" ? "rtl" : "ltr";
 
@@ -35,7 +40,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <body className="min-h-dvh antialiased">
         <LocaleProvider locale={locale}>
-          <CartProvider>{children}</CartProvider>
+          <CartProvider>
+            <PageTransition />
+            {children}
+          </CartProvider>
         </LocaleProvider>
       </body>
     </html>
