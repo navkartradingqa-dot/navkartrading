@@ -20,7 +20,6 @@ const POLICIES: Record<string, { title: string; body: string[] }> = {
       `Manufacturer warranty periods are shown on each product page and start from the date of purchase. Warranty service is handled at our Doha counter — bring the device and the invoice.`,
       `Consumables and personal-use items (earphone tips, screen protectors already applied, opened memory cards) cannot be returned once opened.`,
       `Refunds on card payments are returned to the original card and can take 5–10 working days to appear, depending on your bank.`,
-      `Please replace this text with your own returns policy before launch.`,
     ],
   },
   privacy: {
