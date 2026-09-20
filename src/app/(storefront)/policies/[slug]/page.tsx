@@ -10,7 +10,6 @@ const POLICIES: Record<string, { title: string; body: string[] }> = {
       `Delivery is QAR ${site.delivery.fee} per order, and free on orders over QAR ${site.delivery.freeOver}.`,
       `Our driver will call the mobile number on the order before arriving. If nobody answers we will attempt delivery once more the following day.`,
       `Large items (monitors, printers, appliances) may be scheduled for a specific time slot — we will agree this with you on WhatsApp.`,
-      `Please replace this text with your own delivery terms and courier arrangements before launch.`,
     ],
   },
   returns: {
