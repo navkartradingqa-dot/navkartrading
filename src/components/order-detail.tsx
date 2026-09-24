@@ -1,4 +1,12 @@
-import { Check, Circle, Package, Truck, Home, XCircle, Clock } from "lucide-react";
+import {
+  Check,
+  Circle,
+  Package,
+  Truck,
+  Home,
+  XCircle,
+  Clock,
+} from "lucide-react";
 import type { HydratedOrder } from "@/lib/orders";
 import { STATUS_FLOW } from "@/lib/orders";
 import { formatMoney } from "@/lib/money";
@@ -15,7 +23,13 @@ const ICONS = {
   REFUNDED: XCircle,
 } as const;
 
-export function OrderDetail({ order, locale }: { order: HydratedOrder; locale: Locale }) {
+export function OrderDetail({
+  order,
+  locale,
+}: {
+  order: HydratedOrder;
+  locale: Locale;
+}) {
   const dict = dictionaries[locale];
   const t = (k: keyof typeof dict) => dict[k];
   const isDead = order.status === "CANCELLED" || order.status === "REFUNDED";
@@ -29,11 +43,15 @@ export function OrderDetail({ order, locale }: { order: HydratedOrder; locale: L
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs text-ink-400">{t("confirm.number")}</p>
-              <p className="text-lg font-bold text-ink-950">{order.orderNumber}</p>
+              <p className="text-lg font-bold text-ink-950">
+                {order.orderNumber}
+              </p>
             </div>
             <div className="text-end">
               <p className="text-xs text-ink-400">{t("confirm.tracking")}</p>
-              <p className="font-mono text-lg font-bold text-brand-700">{order.trackingToken}</p>
+              <p className="font-mono text-lg font-bold text-brand-700">
+                {order.trackingToken}
+              </p>
             </div>
           </div>
 
@@ -56,7 +74,10 @@ export function OrderDetail({ order, locale }: { order: HydratedOrder; locale: L
                   const done = i <= currentIndex;
                   const active = i === currentIndex;
                   return (
-                    <li key={status} className="flex flex-1 items-start gap-3 sm:flex-col sm:items-center sm:text-center">
+                    <li
+                      key={status}
+                      className="flex flex-1 items-start gap-3 sm:flex-col sm:items-center sm:text-center"
+                    >
                       <div className="flex flex-col items-center sm:w-full sm:flex-row">
                         <span
                           className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 ${
@@ -69,7 +90,11 @@ export function OrderDetail({ order, locale }: { order: HydratedOrder; locale: L
                         </span>
                         <span
                           className={`hidden h-0.5 flex-1 sm:block ${
-                            i < 4 ? (i < currentIndex ? "bg-brand-700" : "bg-ink-200") : "bg-transparent"
+                            i < 4
+                              ? i < currentIndex
+                                ? "bg-brand-700"
+                                : "bg-ink-200"
+                              : "bg-transparent"
                           }`}
                         />
                       </div>
@@ -93,13 +118,17 @@ export function OrderDetail({ order, locale }: { order: HydratedOrder; locale: L
           </h2>
           <ul className="divide-y divide-ink-100">
             {order.items.map((item) => (
-              <li key={item.id} className="flex items-start justify-between gap-4 px-5 py-3">
+              <li
+                key={item.id}
+                className="flex items-start justify-between gap-4 px-5 py-3"
+              >
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-ink-900">
                     {locale === "ar" ? item.nameAr : item.nameEn}
                   </p>
                   <p className="mt-0.5 text-xs text-ink-400">
-                    {item.sku} · {item.qty} × {formatMoney(item.unitPrice, locale)}
+                    {item.sku} · {item.qty} ×{" "}
+                    {formatMoney(item.unitPrice, locale)}
                   </p>
                 </div>
                 <p className="shrink-0 text-sm font-semibold">
@@ -113,20 +142,28 @@ export function OrderDetail({ order, locale }: { order: HydratedOrder; locale: L
         {/* timeline */}
         {order.events.length > 0 && (
           <div className="card p-5">
-            <h2 className="mb-4 text-sm font-bold text-ink-950">{t("track.timeline")}</h2>
+            <h2 className="mb-4 text-sm font-bold text-ink-950">
+              {t("track.timeline")}
+            </h2>
             <ol className="space-y-3">
               {order.events.map((ev) => (
                 <li key={ev.id} className="flex gap-3">
-                  <Circle size={9} className="mt-1.5 shrink-0 fill-brand-700 text-brand-700" />
+                  <Circle
+                    size={9}
+                    className="mt-1.5 shrink-0 fill-brand-700 text-brand-700"
+                  />
                   <div>
                     <p className="text-sm font-medium text-ink-800">
                       {t(`status.${ev.status}` as keyof typeof dict)}
                     </p>
                     <p className="text-xs text-ink-400">
-                      {new Date(ev.createdAt).toLocaleString(locale === "ar" ? "ar-QA" : "en-GB", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
+                      {new Date(ev.createdAt).toLocaleString(
+                        locale === "ar" ? "ar-QA" : "en-GB",
+                        {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        },
+                      )}
                       {ev.note ? ` · ${ev.note}` : ""}
                     </p>
                   </div>
@@ -140,7 +177,9 @@ export function OrderDetail({ order, locale }: { order: HydratedOrder; locale: L
       {/* summary */}
       <div>
         <div className="card p-5">
-          <h2 className="mb-4 font-bold text-ink-950">{t("checkout.summary")}</h2>
+          <h2 className="mb-4 font-bold text-ink-950">
+            {t("checkout.summary")}
+          </h2>
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between">
               <dt className="text-ink-500">{t("cart.subtotal")}</dt>
@@ -164,30 +203,40 @@ export function OrderDetail({ order, locale }: { order: HydratedOrder; locale: L
             </div>
             <div className="flex justify-between border-t border-ink-100 pt-3 text-base font-bold">
               <dt>{t("cart.total")}</dt>
-              <dd className="text-brand-800">{formatMoney(order.total, locale)}</dd>
+              <dd className="text-brand-800">
+                {formatMoney(order.total, locale)}
+              </dd>
             </div>
           </dl>
 
           <div className="mt-4 space-y-1 border-t border-ink-100 pt-4 text-xs text-ink-500">
             <p>
               <span className="text-ink-400">{t("checkout.payment")}:</span>{" "}
-              <span className="font-medium text-ink-700">{order.paymentMethod}</span> ·{" "}
+              <span className="font-medium text-ink-700">
+                {order.paymentMethod}
+              </span>{" "}
+              ·{" "}
               <span className="font-medium text-ink-700">
                 {t(`pay.${order.paymentStatus}` as keyof typeof dict)}
               </span>
             </p>
             <p>
               <span className="text-ink-400">{t("track.placedOn")}:</span>{" "}
-              {new Date(order.createdAt).toLocaleString(locale === "ar" ? "ar-QA" : "en-GB", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
+              {new Date(order.createdAt).toLocaleString(
+                locale === "ar" ? "ar-QA" : "en-GB",
+                {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                },
+              )}
             </p>
           </div>
 
           {order.channel === "ONLINE" && (
             <div className="mt-4 border-t border-ink-100 pt-4 text-xs">
-              <p className="mb-1 font-semibold text-ink-700">{t("track.deliverTo")}</p>
+              <p className="mb-1 font-semibold text-ink-700">
+                {t("track.deliverTo")}
+              </p>
               <p className="text-ink-500">
                 {order.customerName}
                 <br />
@@ -201,7 +250,12 @@ export function OrderDetail({ order, locale }: { order: HydratedOrder; locale: L
                 ]
                   .filter(Boolean)
                   .join(", ")}
-                {order.addressLine ? <><br />{order.addressLine}</> : null}
+                {order.addressLine ? (
+                  <>
+                    <br />
+                    {order.addressLine}
+                  </>
+                ) : null}
               </p>
             </div>
           )}

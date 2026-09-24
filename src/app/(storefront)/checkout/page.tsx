@@ -9,7 +9,8 @@ import { useLocale } from "@/i18n/client";
 import { formatMoney } from "@/lib/money";
 import { site } from "@/lib/site";
 
-type Method = "COD" | "CARD_ONLINE";
+type Method = "COD";
+// | "CARD_ONLINE"
 
 export default function CheckoutPage() {
   const { lines, subtotal, clear, ready } = useCart();
@@ -147,13 +148,14 @@ export default function CheckoutPage() {
               </label>
               <label className="block sm:col-span-2">
                 <span className="mb-1 block text-xs font-medium text-ink-500">
-                  {t("checkout.email")}
+                  {t("checkout.email")} *
                 </span>
                 <input
                   className="field"
                   type="email"
                   value={form.email}
                   onChange={(e) => set("email", e.target.value)}
+                  required
                 />
               </label>
             </div>
@@ -231,7 +233,7 @@ export default function CheckoutPage() {
             </div>
           </section>
 
-          <section className="card p-5">
+          {/* <section className="card p-5">
             <h2 className="mb-4 font-bold text-ink-950">
               {t("checkout.payment")}
             </h2>
@@ -274,6 +276,35 @@ export default function CheckoutPage() {
                   </span>
                 </button>
               ))}
+            </div>
+          </section> */}
+
+          <section className="card p-5">
+            <h2 className="mb-4 font-bold text-ink-950">
+              {t("checkout.payment")}
+            </h2>
+
+            <div className="grid gap-3">
+              <button
+                type="button"
+                onClick={() => setMethod("COD")}
+                className="flex items-start gap-3 rounded-xl border border-brand-600 bg-brand-50/60 p-4 text-start ring-1 ring-brand-600"
+              >
+                <Banknote
+                  size={20}
+                  className="mt-0.5 shrink-0 text-brand-700"
+                />
+
+                <span>
+                  <span className="block text-sm font-semibold text-ink-900">
+                    {t("checkout.pay.cod")}
+                  </span>
+
+                  <span className="mt-0.5 block text-xs text-ink-500">
+                    {t("checkout.pay.cod.sub")}
+                  </span>
+                </span>
+              </button>
             </div>
           </section>
         </div>
