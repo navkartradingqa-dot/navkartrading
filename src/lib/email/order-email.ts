@@ -286,7 +286,8 @@ export async function sendOrderStatusEmail(order: OrderEmailData) {
     tasks.push(
       resend.emails.send({
         from: EMAIL_FROM,
-        to: ADMIN_ORDER_EMAIL,
+        // to: ADMIN_ORDER_EMAIL,
+        to: ADMIN_ORDER_EMAIL.split(",").map((email) => email.trim()),
         subject: `[Order ${order.status}] ${order.orderNumber}`,
         html: adminHtml(order),
       }),
