@@ -110,12 +110,12 @@ export default async function ProductPage({ params }: { params: Params }) {
               <dt className="text-ink-400">{t("product.sku")}:</dt>
               <dd className="font-medium text-ink-700">{product.sku}</dd>
             </div>
-            <div className="flex gap-2">
+            {/* <div className="flex gap-2">
               <dt className="text-ink-400">{t("product.warranty")}:</dt>
               <dd className="font-medium text-ink-700">
                 {product.warrantyMonths} {t("product.months")}
               </dd>
-            </div>
+            </div> */}
           </dl>
 
           <div className="mt-6">
